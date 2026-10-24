@@ -68,17 +68,19 @@ func AnalyzeSales(sales []Sale) Report {
 
 	var revenueByCategory = map[string]int64{}
 	var revenueByProduct = map[string]int64{}
+	var quantityByProduct = map[string]int{}
 
 	for _, sale := range validSales {
 		revenueByCategory[sale.Category] += sale.UnitPriceKopecks * int64(sale.Quantity)
 		revenueByProduct[sale.Product] += sale.UnitPriceKopecks * int64(sale.Quantity)
+		quantityByProduct[sale.Product] += sale.Quantity
 	}
 
 	var topProduct string
-	var maxSoled int64 = 0
-	for name, revenue := range revenueByProduct {
-		if revenue > maxSoled || revenue == maxSoled && compareRunes(name, topProduct) > -1 {
-			maxSoled = revenue
+	var maxSoled = 0
+	for name, quantity := range quantityByProduct {
+		if quantity > maxSoled || quantity == maxSoled && compareRunes(name, topProduct) < 0 {
+			maxSoled = quantity
 			topProduct = name
 		}
 	}
