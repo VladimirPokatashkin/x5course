@@ -2,14 +2,16 @@ package handler
 
 import (
 	"lessson6/internal/model"
-	"lessson6/internal/service"
 )
 
+type ServiceInterface interface {
+	Create(customer string) (model.Order, error)
+}
 type Handler struct {
-	orders *service.Service
+	orders ServiceInterface
 }
 
-func NewHandler(orders *service.Service) *Handler {
+func NewHandler(orders ServiceInterface) *Handler {
 	return &Handler{orders: orders}
 }
 
