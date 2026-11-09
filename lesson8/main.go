@@ -99,10 +99,11 @@ func writeJSON(w http.ResponseWriter, r *http.Request, status int, value any) {
 func getOrder(store *Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(chi.URLParam(r, "id"))
-		if err != nil {
+		if err != nil || id < 1 {
 			writeJSON(w, r,
 				http.StatusBadRequest,
 				map[string]string{"error": "invalid order id (must be positive integer)."})
+			return
 		}
 
 		order, ok := store.ByID(id)
@@ -110,6 +111,7 @@ func getOrder(store *Store) http.HandlerFunc {
 			writeJSON(w, r,
 				http.StatusNotFound,
 				map[string]string{"error": "order not found."})
+			return
 		}
 
 		writeJSON(w, r, http.StatusOK, order)

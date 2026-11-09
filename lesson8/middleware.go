@@ -40,7 +40,7 @@ func accessLog(next http.Handler) http.Handler {
 				"method", r.Method,
 				"path", r.URL.Path,
 				"status", status,
-				"duration_ms", time.Since(start),
+				"duration_ms", time.Since(start).Milliseconds(),
 			)
 		}()
 		next.ServeHTTP(wrapped, r)
@@ -51,7 +51,7 @@ func recovery(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if rec := recover(); rec != nil {
-				writeJSON(w, r, http.StatusInternalServerError, "internal server error.")
+				writeJSON(w, r, http.StatusInternalServerError, map[string]string{"error": "internal server error."})
 			}
 		}()
 		next.ServeHTTP(w, r)
