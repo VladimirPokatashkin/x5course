@@ -25,7 +25,7 @@ func TestValidatePercent(t *testing.T) {
 			if c.err == nil {
 				assert.NoError(t, ValidatePercent(c.input))
 			} else {
-				assert.EqualError(t, ValidatePercent(c.input), c.err.Error())
+				assert.ErrorIs(t, ValidatePercent(c.input), c.err)
 			}
 		})
 	}
@@ -55,9 +55,10 @@ func TestApply(t *testing.T) {
 			price, err := Apply(c.price, c.percent)
 
 			if c.err == nil {
+				assert.NoError(t, err)
 				assert.Equal(t, c.expected, price)
 			} else {
-				assert.EqualError(t, c.err, err.Error())
+				assert.ErrorIs(t, err, c.err)
 				assert.Equal(t, c.expected, price)
 			}
 		})
@@ -86,8 +87,9 @@ func TestFinalPrice(t *testing.T) {
 
 			if c.err == nil {
 				assert.Equal(t, c.expected, total)
+				assert.NoError(t, err)
 			} else {
-				assert.EqualError(t, c.err, err.Error())
+				assert.ErrorIs(t, err, c.err)
 				assert.Equal(t, c.expected, total)
 			}
 		})
