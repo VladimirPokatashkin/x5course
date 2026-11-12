@@ -1,0 +1,232 @@
+basePath: /
+definitions:
+  handler.errorResponse:
+    properties:
+      code:
+        type: string
+      error:
+        type: string
+    type: object
+  handler.healthResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  order.CreateOrderInput:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/order.Item'
+        type: array
+    type: object
+  order.Item:
+    properties:
+      name:
+        type: string
+      price:
+        type: integer
+      quantity:
+        type: integer
+    type: object
+  order.Order:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/order.Item'
+        type: array
+      status:
+        type: string
+      total_price:
+        type: integer
+    type: object
+  order.StatusChange:
+    properties:
+      changed_at:
+        type: string
+      status:
+        type: string
+    type: object
+  order.UpdateStatusInput:
+    properties:
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: backend for order creation and status management
+  title: order service API
+  version: "1.0"
+paths:
+  /api/v1/orders:
+    get:
+      description: returns list of all created orders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/order.Order'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: list of orders
+      tags:
+      - orders
+    post:
+      consumes:
+      - application/json
+      description: creates new order with list of items and calculates the total price
+      parameters:
+      - description: items to include in the order
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/order.CreateOrderInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/order.Order'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: order creation
+      tags:
+      - orders
+  /api/v1/orders/{id}:
+    get:
+      description: returns order by its unique identifier
+      parameters:
+      - description: order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.Order'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: get an order by id
+      tags:
+      - orders
+  /api/v1/orders/{id}/history:
+    get:
+      description: returns history of order status changing chronological
+      parameters:
+      - description: order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/order.StatusChange'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: get the history of order status changing
+      tags:
+      - orders
+  /api/v1/orders/{id}/status:
+    patch:
+      consumes:
+      - application/json
+      description: updates order status according to lifecycle rules
+      parameters:
+      - description: order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: new order status
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/order.UpdateStatusInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.Order'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: update the status of order
+      tags:
+      - orders
+  /health:
+    get:
+      description: returns availability status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.healthResponse'
+      summary: check if server is available
+      tags:
+      - health
+swagger: "2.0"
