@@ -65,7 +65,7 @@ func NewRouter(service OrderService, logger *slog.Logger) http.Handler {
 // @Success 200 {object} healthResponse
 // @Router /health [get]
 func (h *Handler) health(w http.ResponseWriter, _ *http.Request) {
-	writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+	writeJSON(w, http.StatusOK, healthResponse{Status: "ok"})
 }
 
 // createOrder godoc
