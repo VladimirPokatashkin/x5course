@@ -1,0 +1,50 @@
+basePath: /api/v1
+definitions:
+  httpapi.StatusResponse:
+    properties:
+      status:
+        example: ok
+        type: string
+    required:
+    - status
+    type: object
+info:
+  contact: {}
+  title: order service api
+  version: "1.0"
+paths:
+  /api/v1/orders/{id}:
+    get:
+      parameters:
+      - description: order id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: get an order by id
+      tags:
+      - orders
+  /status:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.StatusResponse'
+      summary: check if server is available (like "health")
+      tags:
+      - status
+swagger: "2.0"
