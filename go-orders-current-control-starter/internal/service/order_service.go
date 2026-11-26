@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"math"
+	"strings"
 	"time"
 
 	"example.com/order-service/internal/order"
@@ -28,6 +29,8 @@ func (s *OrderService) Create(ctx context.Context, input order.CreateOrderInput)
 	}
 
 	for _, item := range input.Items {
+		item.Name = strings.TrimSpace(item.Name)
+
 		if item.Quantity < 1 || item.Name == "" || item.Price < 1 {
 			return order.Order{}, order.ErrInvalidOrder
 		}

@@ -90,6 +90,12 @@ var itemsWithZeroQty = []order.Item{
 	{Name: "oscilloscope", Quantity: 0, Price: 12},
 }
 
+var validItemsWithOneOnlyOfSpaces = []order.Item{
+	{Name: "plis", Quantity: 12, Price: 120000},
+	{Name: "nand", Quantity: 12, Price: 120000},
+	{Name: " 		   		", Quantity: 12, Price: 120000},
+}
+
 func TestCreateOrder(t *testing.T) {
 	cases := []struct {
 		name  string
@@ -100,6 +106,7 @@ func TestCreateOrder(t *testing.T) {
 	}{
 		{name: "valid", ctx: context.Background(), input: order.CreateOrderInput{Items: validItems}, price: 157608000, err: nil},
 		{name: "empty", ctx: context.Background(), input: order.CreateOrderInput{Items: make([]order.Item, 0)}, price: 0, err: order.ErrInvalidOrder},
+		{name: "with item only of spaces in name", ctx: context.Background(), input: order.CreateOrderInput{Items: validItemsWithOneOnlyOfSpaces}, price: 0, err: order.ErrInvalidOrder},
 		{name: "with empty item", ctx: context.Background(), input: order.CreateOrderInput{Items: itemsWithEmpty}, price: 0, err: order.ErrInvalidOrder},
 		{name: "with negative price", ctx: context.Background(), input: order.CreateOrderInput{Items: itemsWithNegativePrice}, price: 0, err: order.ErrInvalidOrder},
 		{name: "with zero price", ctx: context.Background(), input: order.CreateOrderInput{Items: itemsWithZeroPrice}, price: 0, err: order.ErrInvalidOrder},
